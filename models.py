@@ -41,6 +41,9 @@ class Movie(db.Model):
             'release_date': self.release_date
         }
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 # Actors
 
@@ -64,3 +67,11 @@ class Actor(db.Model):
             'age': self.age,
             'gender': self.gender
         }
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
