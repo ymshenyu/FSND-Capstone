@@ -1,7 +1,8 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from models import setup_db, Actor, Movie
 from flask_cors import CORS
+from auth import require_permission, AuthError
 
 
 def format_data(d):
@@ -16,7 +17,8 @@ def create_app(test_config=None):
 
     # Actors endpoints
     @app.route('/actors')
-    def get_actors():
+    @require_permission('read:information')
+    def get_actors(payload):
         query = Actor.query.all()
 
         return jsonify({
@@ -25,9 +27,13 @@ def create_app(test_config=None):
         })
 
     @app.route('/actors/<int:actor_id>', methods=['DELETE'])
-    def delete_actor(actor_id):
+    @require_permission('delete:actor')
+    def delete_actor(payload, actor_id):
         actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
-        actor.delete()
+        try:
+            actor.delete()
+        except Exception:
+            abort(404)
 
         return jsonify({
             'id': actor.id,
@@ -35,10 +41,14 @@ def create_app(test_config=None):
         })
 
     @app.route('/actors', methods=['POST'])
-    def add_actor():
+    @require_permission('create:actor')
+    def add_actor(payload):
         req = request.get_json()
         actor = Actor(name=req['name'], age=req['age'], gender=req['gender'])
-        actor.insert()
+        try:
+            actor.insert()
+        except Exception:
+            abort(422)
 
         return jsonify({
             'id': actor.id,
@@ -46,11 +56,15 @@ def create_app(test_config=None):
         })
 
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
-    def update_actors(actor_id):
+    @require_permission('update:actor')
+    def update_actors(payload, actor_id):
         req = request.get_json()
         query = Actor.query.filter(Actor.id == actor_id).one_or_none()
         actor = query(name=req['name'], age=req['age'], gender=req['gender'])
-        actor.update()
+        try:
+            actor.update()
+        except Exception:
+            abort(422)
 
         return jsonify({
             'id': actor.id,
@@ -59,7 +73,8 @@ def create_app(test_config=None):
 
     # Movies endpoints
     @app.route('/movies')
-    def get_movies():
+    @require_permission('read:information')
+    def get_movies(payload):
         query = Movie.query.all()
 
         return jsonify({
@@ -68,9 +83,13 @@ def create_app(test_config=None):
         })
 
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
-    def delete_movie(movie_id):
+    @require_permission('delete:movie')
+    def delete_movie(payload, movie_id):
         movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
-        movie.delete()
+        try:
+            movie.delete()
+        except Exception:
+            abort(404)
 
         return jsonify({
             'id': movie.id,
@@ -78,10 +97,14 @@ def create_app(test_config=None):
         })
 
     @app.route('/movies', methods=['POST'])
-    def add_movie():
+    @require_permission('create:movie')
+    def add_movie(payload):
         req = request.get_json()
         movie = Movie(title=req['title'], release_date=req['release_date'])
-        movie.insert()
+        try:
+            movie.insert()
+        except Exception:
+            abort(422)
 
         return jsonify({
             'id': movie.id,
@@ -89,17 +112,49 @@ def create_app(test_config=None):
         })
 
     @app.route('/movies/int:movie_id', methods=['PATCH'])
-    def update_movie(movie_id):
+    @require_permission('update:movie')
+    def update_movie(payload, movie_id):
         req = request.get_json()
         query = Movie.query.filter(Movie.id == movie_id).one_or_none()
         movie = query(title=req['title'], release_date=req['release_date'])
-        movie.update()
+        try:
+            movie.update()
+        except Exception:
+            abort(422)
 
         return jsonify({
             'id': movie.id,
             'success': True
         })
 
+    # Error handler
+    @app.errorhandler(404)
+    def resource_not_found(error):
+        return jsonify({
+            'code': 404,
+            'description': 'resource not found',
+            'success': False
+        }), 404
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            'code': 422,
+            'description': 'unprocessable',
+            'success': False
+        }), 422
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return jsonify({
+            'code': 500,
+            'description': 'Internal Server Error',
+            'success': False
+        }), 500
+    
+    @app.errorhandler(AuthError)
+    def auth_error(error):
+        return jsonify(error.error), error.status_code
     return app
 
 

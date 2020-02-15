@@ -1,3 +1,5 @@
 #!/bin/bash
 export FLASK_ENV=development
 export DATABASE_URL=postgresql:///capstone
+export JWT_SECRET=61UhhcwoBYM-misiRl8tEmhKmuDMpd1OVmRxemm1KsWXhqBh2E1gty-kIwwmPri2
+export AUTH0_CLIENT_ID=rEctOj2xzNrkjIXYXvzRpJYl4EIcRsTL
