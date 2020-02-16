@@ -79,7 +79,8 @@ def verify_decode_jwt(token):
         except jwt.JWTClaimsError:
             raise AuthError({
                 "code": "invalid_claims",
-                "description": "incorrect claims, please check the audience and issuer"
+                "description":
+                "incorrect claims, please check the audience and issuer"
             }, 401)
         except Exception:
             raise AuthError({
@@ -106,8 +107,9 @@ def check_permission(permission, payload):
             "code": "permission_denied",
             "description": "Permission denied"
         }, 403)
-    
+
     return True
+
 
 def require_permission(permission=''):
     def require_permission_decorator(f):

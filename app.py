@@ -59,8 +59,13 @@ def create_app(test_config=None):
     @require_permission('update:actor')
     def update_actors(payload, actor_id):
         req = request.get_json()
-        query = Actor.query.filter(Actor.id == actor_id).one_or_none()
-        actor = query(name=req['name'], age=req['age'], gender=req['gender'])
+        actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
+        if 'name' in req:
+            actor.name = req['name']
+        if 'age' in req:
+            actor.age = req['age']
+        if 'gender' in req:
+            actor.gender = req['gender']
         try:
             actor.update()
         except Exception:
@@ -111,12 +116,15 @@ def create_app(test_config=None):
             'success': True
         })
 
-    @app.route('/movies/int:movie_id', methods=['PATCH'])
+    @app.route('/movies/<int:movie_id>', methods=['PATCH'])
     @require_permission('update:movie')
     def update_movie(payload, movie_id):
         req = request.get_json()
-        query = Movie.query.filter(Movie.id == movie_id).one_or_none()
-        movie = query(title=req['title'], release_date=req['release_date'])
+        movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
+        if 'title' in req:
+            movie.title = req['title']
+        if 'release_date' in req:
+            movie.release_date = req['release_date']
         try:
             movie.update()
         except Exception:
@@ -151,7 +159,7 @@ def create_app(test_config=None):
             'description': 'Internal Server Error',
             'success': False
         }), 500
-    
+
     @app.errorhandler(AuthError)
     def auth_error(error):
         return jsonify(error.error), error.status_code

@@ -7,11 +7,6 @@ database_path = os.environ['DATABASE_URL']
 
 db = SQLAlchemy()
 
-'''
-setup_db(app)
-    binds a flask application and a SQLAlchemy service
-'''
-
 
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
@@ -50,7 +45,6 @@ class Movie(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.update(self)
         db.session.commit()
 
 # Actors
@@ -83,7 +77,6 @@ class Actor(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
-    
+
     def update(self):
-        db.session.update(self)
         db.session.commit()
