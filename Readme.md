@@ -71,5 +71,6 @@ You can get the tokens [here](https://github.com/ymshenyu/FSND-Capstone/blob/mas
 ### About test
 #### Testing with unittest library
 ```bash
+$ createdb casting_agency_test
 $ python test_app.py
 ```

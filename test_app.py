@@ -12,7 +12,7 @@ class CastingAgencyTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
         self.client = self.app.test_client()
-        self.database_name = "casting_agency"
+        self.database_name = "casting_agency_test"
         self.database_path = "postgresql://{}/{}".format(
             'localhost:5432',
             self.database_name
@@ -31,13 +31,13 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Get actors information without token
 
-    def test1(self):
+    def test1_get_actors_without_valid_authorization_token(self):
         res = self.client.get('/actors')
         self.assertEqual(res.status_code, 401)
 
     # Get actors information with casting assistant token
 
-    def test2(self):
+    def test2_get_actors_with_valid_authorization_token(self):
         res = self.client.get(
             '/actors',
             headers={
@@ -48,7 +48,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Add actor without permission
 
-    def test3(self):
+    def test3_add_a_actor_without_valid_authorization_token(self):
         res = self.client.post(
             '/actors',
             json={
@@ -64,7 +64,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Add actor with permission
 
-    def test4(self):
+    def test4_add_a_actor_with_valid_authorization_token(self):
         res = self.client.post(
             '/actors',
             json={
@@ -82,7 +82,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Unprocessable entity
 
-    def test5(self):
+    def test5_unprocessable(self):
         res = self.client.post(
             '/actors',
             json={
@@ -100,7 +100,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Update actor information without permission
 
-    def test6(self):
+    def test6_update_a_actor_without_valid_authorization_token(self):
         res = self.client.patch(
             '/actors/1',
             json={
@@ -114,7 +114,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Update actor with permission
 
-    def test7(self):
+    def test7_update_a_actor_with_valid_authorization_token(self):
         res = self.client.patch(
             '/actors/1',
             json={
@@ -130,7 +130,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Delete actor without permission
 
-    def test8(self):
+    def test8_delete_a_actor_without_valid_authorization_token(self):
         res = self.client.delete(
             '/actors/1',
             headers={
@@ -141,7 +141,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Delete actor with permission
 
-    def test9(self):
+    def test9_delete_a_actor_with_valid_authorization_token(self):
         res = self.client.delete(
             '/actors/1',
             headers={
@@ -156,13 +156,13 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Get movies information without permission
 
-    def test10(self):
+    def test10_get_movies_without_valid_authorization_token(self):
         res = self.client.get('/movies')
         self.assertEqual(res.status_code, 401)
 
     # Get movies information with permission
 
-    def test11(self):
+    def test11_get_movies_with_valid_authorization_token(self):
         res = self.client.get(
             '/movies',
             headers={
@@ -173,7 +173,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Add movies without permission
 
-    def test12(self):
+    def test12_add_a_movie_without_valid_authorization_token(self):
         res = self.client.post(
             '/movies',
             json={
@@ -189,7 +189,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Add movies with permission
 
-    def test13(self):
+    def test13_add_a_movie_with_valid_authorization_token(self):
         res = self.client.post(
             '/movies',
             json={
@@ -206,7 +206,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Update movies information without permission
 
-    def test14(self):
+    def test14_update_a_movie_without_valid_authorization_token(self):
         res = self.client.patch(
             '/movies/1',
             json={
@@ -220,7 +220,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Update movies with permisson
 
-    def test15(self):
+    def test15_update_a_movie_with_valid_authorization_token(self):
         res = self.client.patch(
             '/movies/1',
             json={
@@ -234,7 +234,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Delete movies without permission
 
-    def test16(self):
+    def test16_delete_a_movie_without_valid_authorization_token(self):
         res = self.client.delete(
             '/movies/1',
             headers={
@@ -245,7 +245,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     # Delete movies with permission
 
-    def test17(self):
+    def test17_delete_a_movie_with_valid_authorization_token(self):
         res = self.client.delete(
             '/movies/1',
             headers={
