@@ -12,7 +12,7 @@ class CastingAgencyTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
         self.client = self.app.test_client()
-        self.database_name = "capstone_test"
+        self.database_name = "casting_agency"
         self.database_path = "postgresql://{}/{}".format(
             'localhost:5432',
             self.database_name
